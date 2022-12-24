@@ -11,15 +11,15 @@
 
 const {request} = require("../utils/requestHandler")
 
-
 /**
  *
- * Description. (Get user information by applying filter by (photo_id) sent as parameter)
+ * Description. (Returns the information based on the parameters sent)
  *
  * @since      1.0.0
- * @param {Object} req           HTTP request information.
- * @param {Object} res           HTTP response information.
+ * @param {String} endpoint     Endpoint name to which the request will be made.
+ * @param {String} id           Id to search, this parameter is optional, if a specific document is sent it is searched, otherwise the entire list will be returned.
  *
+ * @returns {Object} Response information
  */
 exports.getDataById = async function (endpoint,id) {
     try {   
