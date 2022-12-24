@@ -9,7 +9,7 @@
  */
 const dotenv = require('dotenv')
 const morgan = require('morgan')
-const path = require('path')
+const serverless = require('serverless-http');
 
 dotenv.config()
 var express = require('express')
@@ -23,7 +23,13 @@ app.get('/', function (req, res) {
 // URL API
 app.use(require("../routes/index"));
 
+if(process.env.env === "dev"){
+    app.listen(process.env.PORT, () => {
+        console.log(`Escuchando el puerto ${process.env.PORT}`)
+    })
+}else{
+    app.use('/.netlify/functions/server', require("../routes/index"));  // path must route to lambda
+    module.exports = app;
+    module.exports.handler = serverless(app);
+}
 
-app.listen(process.env.PORT, () => {
-    console.log(`Escuchando el puerto ${process.env.PORT}`)
-})
