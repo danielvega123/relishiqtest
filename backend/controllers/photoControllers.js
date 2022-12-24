@@ -98,8 +98,9 @@ exports.getbyID = async function (req, res) {
  */
 exports.getbyFilter = async function (req, res) {
     try {   
-      var title = req.query.title
-     
+      var title = req.query["title"]
+      var album_title = req.query["album.title"]
+      var album_user_email = req.query["album.user.email"]
      
       var nestedInformation = {
         album: {},
@@ -109,61 +110,41 @@ exports.getbyFilter = async function (req, res) {
 
 
       //Get the photo information
-      var response = await getDataById("photos","")      
-      if(!response.status) return res.status(400).json({
+      var photos_collection = await getDataById("photos","")      
+      var album_collection = await getDataById("albums","")      
+      var user_collection = await getDataById("users","")      
+
+      if (!photos_collection || !album_collection || !user_collection)return res.status(400).json({
         status: false,
         result: nestedInformation,
-        message: response.message
+        message: "Unable to retrieved all the infomartion"
       })
 
-      var result = response.result
-      result = result.filter(e=>e.title.includes(title.toLowerCase()))
+      nestedInformation.photo = photos_collection.result // Assign to the response structure the data retrieved
+      nestedInformation.album = album_collection.result // Assign to the response structure the data retrieved
+      nestedInformation.user = user_collection.result // Assign to the response structure the data retrieved
 
-      nestedInformation.photo = JSON.parse(JSON.stringify(response.result))
-      var results = resp
-       return res.status(400).json({
-        status: false,
-        result: nestedInformation,
-        message: response.message
+      //First filter would be the album.user.email because is the root of the relation between the other collections
+      if(album_user_email && album_user_email.trim().length > 0) nestedInformation.user = nestedInformation.user.filter(e=>e.email === album_user_email) //Filtering by tittle
+      var userIds = [...new Set(nestedInformation.user.map(e=> e.id))] //Unique id's
+      nestedInformation.album = nestedInformation.album.filter(e=>{
+        return userIds.includes(e.userId)
       })
-      if(!response.status) return res.status(400).json({
-        status: false,
-        result: nestedInformation,
-        message: response.message
-      })
-      nestedInformation.photo = JSON.parse(JSON.stringify(response.result))
 
-      //Get the album information      
-      var response = await getDataById("albums",nestedInformation.photo.albumId)
-      if(!response.status) return res.status(400).json({
-        status: false,
-        result: nestedInformation,
-        message: response.message
-      })
-      nestedInformation.album = JSON.parse(JSON.stringify(response.result))
+      //Second filter would be the album.title that is in the 2nd level
+      if(album_title && album_title.trim().length > 0)nestedInformation.album = nestedInformation.album.filter(e=>e.title.includes(album_title.toLowerCase())) //Filtering by album.title
+      var albumIds = [...new Set(nestedInformation.album.map(e=> e.id))] //Unique id's
+      nestedInformation.photo = nestedInformation.photo.filter(e=>{
+        return albumIds.includes(e.albumId)
+      }) //Filtering by albums id's
 
-      //Get the user information      
-      var response = await getDataById("users",nestedInformation.album.userId)
-      if(!response.status) return res.status(400).json({
-        status: false,
-        result: nestedInformation,
-        message: response.message
-      })
-      nestedInformation.user = JSON.parse(JSON.stringify(response.result))
+      //Last filter would be the title of the photo
+      if(title && title.trim().length > 0)nestedInformation.photo = nestedInformation.photo.filter(e=>e.title.includes(title.toLowerCase())) //Filtering by tittle
+      
       
       //format the response
-      var jsonFinal = {}      
-      delete nestedInformation.photo["albumId"]
-      delete nestedInformation.photo["status"]
-      delete nestedInformation.album["userId"]
-      delete nestedInformation.album["status"]
-      delete nestedInformation.user["status"]
-
-      jsonFinal = {...nestedInformation.photo}
-      jsonFinal["album"] = nestedInformation.album
-      jsonFinal["album"]["user"] = nestedInformation.user
       
-      return res.status(200).json(jsonFinal)
+      return res.status(200).json(nestedInformation)
      
     } catch (err) {
     console.log("Class: usercontrollers, method: get", [err])
