@@ -7,29 +7,26 @@
  * @author Daniel Vega.
  * @since  1.0.0
  */
-const dotenv = require('dotenv')
-const morgan = require('morgan')
-const serverless = require('serverless-http');
+const dotenv = require("dotenv");
+const morgan = require("morgan");
+const cors = require("cors");
 
-dotenv.config()
-var express = require('express')
-var app = express()
-app.use(morgan('tiny'))
+dotenv.config();
+var express = require("express");
+var app = express();
+app.use(morgan("tiny"));
 
-app.get('/', function (req, res) {
-    res.send('hello, world!')
-})
+app.use(cors({
+    origin: 'http://localhost:3000'
+}));
+
+app.get("/", function (req, res) {
+  res.send("hello, world!");
+});
 
 // URL API
 app.use(require("../routes/index"));
 
-if(process.env.env === "dev"){
-    app.listen(process.env.PORT, () => {
-        console.log(`Escuchando el puerto ${process.env.PORT}`)
-    })
-}else{
-    app.use('/.netlify/functions/server', require("../routes/index"));  // path must route to lambda
-    module.exports = app;
-    module.exports.handler = serverless(app);
-}
-
+app.listen(process.env.PORT, () => {
+  console.log(`Escuchando el puerto ${process.env.PORT}`);
+});
