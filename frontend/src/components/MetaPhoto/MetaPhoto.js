@@ -6,10 +6,12 @@ import { Box, TablePagination } from "@mui/material";
 
 function MetaPhoto() {
   let [filter, setFilter] = useState({
+    id: null,
     title: null,
     "album.title": null,
     "album.user.email": null,
   });
+  let [useId,setUseId] = useState(false) // check if the search is by filter or by id
   let [photos, setPhotos] = useState([]);
   let [id_photo, setId_photo] = useState("");
   let [offset, setOffset] = useState(0);
@@ -20,20 +22,28 @@ function MetaPhoto() {
 
   useEffect(() => {
     try {
-      var filter_str = "?";
-      if (filter["title"] && filter["title"].length > 0)
-        filter_str += `title=${filter["title"]}`;
-      if (filter["album.title"] && filter["album.title"].length > 0)
-        filter_str += `&album.title=${filter["album.title"]}`;
-      if (filter["album.user.email"] && filter["album.user.email"].length > 0)
-        filter_str += `&album.user.email=${filter["album.user.email"]}`;
-        filter_str += `&limit=${limit}&offset=${offset}`
-      setId_photo(filter_str);
+        var filter_str = ""
+        console.log(useId)
+      if(useId){
+        filter_str = `/${filter["id"]}`
+        setId_photo(filter_str);
+      } else{
+        filter_str = "?";
+        if (filter["title"] && filter["title"].length > 0)
+          filter_str += `title=${filter["title"]}`;
+        if (filter["album.title"] && filter["album.title"].length > 0)
+          filter_str += `&album.title=${filter["album.title"]}`;
+        if (filter["album.user.email"] && filter["album.user.email"].length > 0)
+          filter_str += `&album.user.email=${filter["album.user.email"]}`;
+          filter_str += `&limit=${limit}&offset=${offset}`
+        setId_photo(filter_str);
+      } 
+      
     } catch (error) {
       console.log(error);
       setId_photo("");
     }
-  }, [filter, offset,limit]);
+  }, [filter, offset,limit, useId]);
 
   const getPhotos = useCallback(async () => {
     const response = await axios.get(
@@ -70,9 +80,10 @@ function MetaPhoto() {
   return (
     <>
       <Box m={4}>
-        <Form setFilter={setFilter} filter={filter}></Form>
+        <Form setFilter={setFilter} filter={filter} setUseId={setUseId} useId={useId}></Form>
       </Box>
       <Box m={4}>
+        {useId ? (<p>If you want to apply more filters, remove the "id" filter</p>) : (<p></p>)}
         {photos.length === 0 ? (
           <p>Sorry, the list is empty.</p>
         ) : (

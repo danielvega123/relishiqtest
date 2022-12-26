@@ -4,12 +4,13 @@ import { Select, MenuItem, Box, Grid } from "@mui/material";
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
 
-function Form({ setFilter, filter }) {
+function Form({ setFilter, filter, setUseId, useId }) {
   let [option, setOption] = useState("title");
   let [valueText, setText] = useState("");
 
   const resetClick = ()=>{
     setFilter({
+        id: null,
         title: null,
         "album.title": null,
         "album.user.email": null,
@@ -17,21 +18,24 @@ function Form({ setFilter, filter }) {
   }
 
   const handleDelete = (event)=>{
-    console.log(event.key)
+    if(option === "id" ) setUseId(false)
     filter[event] = null;
     setFilter({ ...filter });
   }
 
   const handleClick = (event) => {
-    filter[option] = valueText;
-    setFilter({ ...filter });
+    if(option === "id" ) setUseId(true)
+    if(!useId){
+        filter[option] = valueText;
+        setFilter({ ...filter });
+    }    
   };
 
   const handleChange = (event) => {
     setOption(event.target.value);
   };
 
-  let options = ["title", "album.title", "album.user.email"];
+  let options = ["title", "album.title", "album.user.email","id"];
   return (
     <>
       <Grid container spacing={0.5} alignItems="center" justifyItems="center" textAlign="center">
