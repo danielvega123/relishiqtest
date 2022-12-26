@@ -1,0 +1,12 @@
+version: "3.5"
+services:
+  metaphoto_api:
+    container_name: metaphoto_api_api
+    build: ./mp_api/
+    ports:
+      - 5000:5000
+  s3_web:
+    container_name: metaphoto_api_web
+    build: ./mp_web/
+    ports:
+      - 3000:80
