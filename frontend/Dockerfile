@@ -8,4 +8,4 @@ COPY . ./
 RUN npm install
 
 EXPOSE 3000
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["npm", "start"]
