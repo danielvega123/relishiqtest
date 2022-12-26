@@ -7,7 +7,5 @@ COPY ./package.json ./
 COPY . ./
 RUN npm install
 
-FROM nginx:alpine
-COPY --from=app /usr/src/app/build /usr/share/nginx/html
-EXPOSE 80
+EXPOSE 3000
 CMD ["nginx", "-g", "daemon off;"]
