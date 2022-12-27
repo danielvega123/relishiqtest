@@ -1,8 +1,6 @@
 import { useState } from "react";
 import TextField from "@mui/material/TextField";
-import { Select, MenuItem, Box, Grid } from "@mui/material";
-import Button from "@mui/material/Button";
-import Chip from "@mui/material/Chip";
+import { Select, MenuItem, Box, Grid, Button, Chip } from "@mui/material";
 
 function Form({ setFilter, filter, setUseId, useId }) {
   let [option, setOption] = useState("title");
@@ -15,18 +13,19 @@ function Form({ setFilter, filter, setUseId, useId }) {
         "album.title": null,
         "album.user.email": null,
       })
+      setUseId(false)
   }
 
   const handleDelete = (event)=>{
-    if(option === "id" ) setUseId(false)
+    if(option === "id" ) setUseId(false) //hides the message and allows other filters to be applied
     filter[event] = null;
     setFilter({ ...filter });
   }
 
   const handleClick = (event) => {
-    if(option === "id" ) setUseId(true)
+    if(option === "id" ) setUseId(true) //if the id was selected, display the message indicating the search by id, it does not affect the rest of the filters
     if(!useId){
-        filter[option] = valueText;
+        filter[option] = valueText;//Modify the value of the filter based on the option that was selected
         setFilter({ ...filter });
     }    
   };
@@ -35,7 +34,7 @@ function Form({ setFilter, filter, setUseId, useId }) {
     setOption(event.target.value);
   };
 
-  let options = ["title", "album.title", "album.user.email","id"];
+  let options = ["title", "album.title", "album.user.email","id"]; //key to know the filter that was applied
   return (
     <>
       <Grid container spacing={0.5} alignItems="center" justifyItems="center" textAlign="center">
