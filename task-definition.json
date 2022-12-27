@@ -1,0 +1,90 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:us-east-2:459085809850:task-definition/first-run-task-definition:2",
+    "containerDefinitions": [
+        {
+            "name": "backend",
+            "image": "459085809850.dkr.ecr.us-east-2.amazonaws.com/relishiq:latest",
+            "cpu": 256,
+            "memoryReservation": 512,
+            "links": [],
+            "portMappings": [
+                {
+                    "containerPort": 5000,
+                    "hostPort": 5000,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "entryPoint": [],
+            "command": [],
+            "environment": [
+                {
+                    "name": "env",
+                    "value": "dev"
+                },
+                {
+                    "name": "PORT",
+                    "value": "5000"
+                },
+                {
+                    "name": "PREFIX",
+                    "value": "externalapi"
+                }
+            ],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/first-run-task-definition",
+                    "awslogs-region": "us-east-2",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
+        }
+    ],
+    "family": "first-run-task-definition",
+    "executionRoleArn": "arn:aws:iam::459085809850:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "revision": 2,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.21"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE"
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "512",
+    "registeredAt": "2022-12-26T23:27:43.346000-06:00",
+    "registeredBy": "arn:aws:iam::459085809850:root"
+}
