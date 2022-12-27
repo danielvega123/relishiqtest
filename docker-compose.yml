@@ -1,0 +1,12 @@
+version: "3.5"
+services:
+  metaphoto_api:
+    container_name: metaphoto_api_api
+    build: ./backend/
+    ports:
+      - 5000:5000
+  methaphoto_web:
+    container_name: metaphoto_api_web
+    build: ./frontend/
+    ports:
+      - 3000:3000
